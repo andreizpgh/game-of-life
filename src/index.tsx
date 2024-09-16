@@ -1,10 +1,15 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import './styles.css';
 
-const App: React.FC = () => {
-  return <div>Hello, world!</div>;
-};
+import App from './App';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = createRoot(document.getElementById('root')!);
 
-root.render(<App />);
+root.render(
+  <StrictMode>
+    <div className='wrapper'>
+      <App />
+    </div>
+  </StrictMode>
+);

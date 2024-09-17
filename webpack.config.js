@@ -5,7 +5,7 @@ module.exports = {
   entry: "./src/index.tsx",
   output: {
     filename: "bundle.js",
-    path: path.resolve(__dirname, "dist"),
+    path: path.resolve(__dirname, "build"),
   },
   resolve: {
     extensions: [".tsx", ".ts", ".js"],
@@ -18,11 +18,6 @@ module.exports = {
         use: "babel-loader",
       },
     ],
-  },
-  performance: {
-    hints: false,
-    maxEntrypointSize: 512000,
-    maxAssetSize: 512000,
   },
   plugins: [
     new HtmlWebpackPlugin({

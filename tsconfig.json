@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ES5" /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019', 'ES2020', or 'ESNEXT'. */,
     "module": "ESNext" /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', 'es2020', or 'ESNext'. */,
-    "moduleResolution": "node16" /* Specify module resolution strategy: 'node16', 'node10', 'bundler' or 'classic' (TypeScript pre-1.6). */,
+    "moduleResolution": "node" /* Specify module resolution strategy: 'node16', 'node10', 'bundler' or 'classic' (TypeScript pre-1.6). */,
     "lib": [
       "DOM",
       "ESNext"
@@ -11,7 +11,9 @@
     "noEmit": true /* Do not emit outputs. */,
     "isolatedModules": true /* Tells TS to warn you if you write code that can’t be correctly interpreted by a single-file transpilation process. */,
     "strict": true /* Enable all strict type-checking options. */,
-    "resolveJsonModule": true
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true
   },
   "include": ["src/**/*"]
 }

@@ -8,7 +8,12 @@ interface SketchPropsI {
   size: number;
   ratio: number;
   colors: string[];
-  Variant: number;
+  engine: string;
+}
+
+interface enginesI {
+  Naive: any;
+  Optimized: any;
 }
 
 export default function Sketch({
@@ -16,12 +21,12 @@ export default function Sketch({
   size,
   ratio,
   colors,
-  Variant,
+  engine,
 }: SketchPropsI) {
   const renderRef = useRef<HTMLDivElement>(null);
   const unit = canvasSize / size;
 
-  const N = (p5: p5) => {
+  const Naive = (p5: p5) => {
     let G = generateStartState(p5, size, ratio);
 
     p5.setup = () => {
@@ -34,11 +39,11 @@ export default function Sketch({
       G = findNextGeneration(G, size);
       display(p5, G, size, colors);
       p5.noLoop();
-      //console.log(p.frameRate());
+      //console.log(p5.frameRate());
     };
   };
 
-  const O = (p5: p5) => {
+  const Optimized = (p5: p5) => {
     const Generations = init(p5, size, ratio);
 
     p5.setup = () => {
@@ -50,17 +55,20 @@ export default function Sketch({
     p5.draw = () => {
       update(p5, Generations, size, unit, colors);
       p5.noLoop();
-      //console.log(p.frameRate());
+      //console.log(p5.frameRate());
     };
   };
 
-  const engines = [N, O];
+  const engines: enginesI = {
+    Naive: Naive,
+    Optimized: Optimized,
+  };
 
   useEffect(() => {
-    const callBack = engines[Variant];
+    const callBack = engines[engine as keyof enginesI];
     const myP5 = new p5(callBack, renderRef.current as HTMLDivElement);
     return myP5.remove;
-  }, []);
+  }, [size, colors, engine]);
 
   return <div ref={renderRef}></div>;
 }

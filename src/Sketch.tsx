@@ -1,52 +1,64 @@
 import { useRef, useEffect } from "react";
 import { generateStartState, findNextGeneration, display } from "./Naive";
-import { init, update } from "./Optimized";
+import { init, drawFirstFrame, update } from "./Optimized";
 import p5 from "p5";
 
 interface SketchPropsI {
+  canvasSize: number;
   size: number;
   ratio: number;
   colors: string[];
-  N: boolean;
+  Variant: number;
 }
 
-export default function Sketch({ size, ratio, colors, N }: SketchPropsI) {
+export default function Sketch({
+  canvasSize,
+  size,
+  ratio,
+  colors,
+  Variant,
+}: SketchPropsI) {
   const renderRef = useRef<HTMLDivElement>(null);
+  const unit = canvasSize / size;
 
-  const s = (p: p5) => {
-    let G: number[][];
-    let Generations: Uint8Array[][];
-    if (N) {
-      G = generateStartState(p, size, ratio);
-    } else {
-      Generations = init(p, size, ratio);
-    }
-    let unit = 0;
+  const N = (p5: p5) => {
+    let G = generateStartState(p5, size, ratio);
 
-    p.setup = () => {
-      p.createCanvas(800, 800);
-      p.noStroke();
-      unit = p.width / size;
-      if (N) {
-        //display(p, G, size, colors);
-      }
+    p5.setup = () => {
+      p5.createCanvas(canvasSize, canvasSize);
+      p5.noStroke();
+      display(p5, G, size, colors);
     };
 
-    p.draw = () => {
-      if (N) {
-        G = findNextGeneration(G, size);
-        display(p, G, size, colors);
-      } else {
-        update(p, Generations, size, unit, colors);
-      }
-
-      //p.noLoop();
+    p5.draw = () => {
+      G = findNextGeneration(G, size);
+      display(p5, G, size, colors);
+      p5.noLoop();
       //console.log(p.frameRate());
     };
   };
 
+  const O = (p5: p5) => {
+    const Generations = init(p5, size, ratio);
+
+    p5.setup = () => {
+      p5.createCanvas(canvasSize, canvasSize);
+      p5.noStroke();
+      drawFirstFrame(p5, Generations, size, unit, colors);
+    };
+
+    p5.draw = () => {
+      update(p5, Generations, size, unit, colors);
+      p5.noLoop();
+      //console.log(p.frameRate());
+    };
+  };
+
+  const engines = [N, O];
+
   useEffect(() => {
-    const myP5 = new p5(s, renderRef.current as HTMLDivElement);
+    const callBack = engines[Variant];
+    const myP5 = new p5(callBack, renderRef.current as HTMLDivElement);
     return myP5.remove;
   }, []);
 

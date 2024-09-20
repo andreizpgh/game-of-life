@@ -1,16 +1,16 @@
 import p5 from "p5";
 
 export const generateStartState = (
-  p: p5,
+  p5: p5,
   size: number,
   ratio: number
 ): number[][] => {
-  const variants = new Array(ratio).fill(0).concat([1]);
+  const variants = new Array(ratio).fill(false).concat([true]);
   const grid = Array.from({ length: size }, () => new Array(size));
 
   for (let row = 0; row < size; row++) {
     for (let column = 0; column < size; column++) {
-      grid[row][column] = variants[p.floor(p.random(0, variants.length))];
+      grid[row][column] = variants[p5.floor(p5.random(0, variants.length))];
     }
   }
 
@@ -18,18 +18,18 @@ export const generateStartState = (
 };
 
 export const display = (
-  p: p5,
+  p5: p5,
   grid: number[][],
   size: number,
   colors: string[]
 ): void => {
-  const unit = p.width / size;
+  const unit = p5.width / size;
   for (let row = 0; row < size; row++) {
     for (let column = 0; column < size; column++) {
-      if (grid[row]?.[column])
-        p.fill(colors[Math.floor(p.random(0, colors.length))]);
-      else p.fill("white");
-      p.square(row * unit, column * unit, unit);
+      if (grid[row][column])
+        p5.fill(colors[Math.floor(p5.random(0, colors.length))]);
+      else p5.fill("white");
+      p5.square(row * unit, column * unit, unit);
     }
   }
 };
@@ -42,9 +42,9 @@ export const findNextGeneration = (
 
   for (let row = 0; row < size; row++) {
     for (let column = 0; column < size; column++) {
-      const n = countNeighbors(grid, row, column, size);
-      if (n > 3 || n < 2) next[row][column] = 0;
-      if (n == 3) next[row][column] = 1;
+      const n = countNeighbors(grid, size, row, column);
+      if (n > 3 || n < 2) next[row][column] = false;
+      if (n == 3) next[row][column] = true;
       if (n == 2) next[row][column] = grid[row][column];
     }
   }
@@ -54,14 +54,16 @@ export const findNextGeneration = (
 
 const countNeighbors = (
   grid: number[][],
+  size: number,
   row: number,
-  column: number,
-  size: number
+  column: number
 ): number => {
   let count = 0;
 
   for (let rowOffset = -1; rowOffset < 2; rowOffset++) {
     for (let columnOffset = -1; columnOffset < 2; columnOffset++) {
+      if (rowOffset == 0 && columnOffset == 0) continue;
+
       count +=
         grid[(row + rowOffset + size) % size][
           (column + columnOffset + size) % size
@@ -69,5 +71,5 @@ const countNeighbors = (
     }
   }
 
-  return count - grid[row][column];
+  return count;
 };

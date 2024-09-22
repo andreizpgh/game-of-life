@@ -1,22 +1,19 @@
 import { ChangeEventHandler } from "react";
 
 interface ControlsPropsI {
-  size: number;
-  onSize: ChangeEventHandler<HTMLSelectElement>;
-  palette: string;
-  onPalette: ChangeEventHandler<HTMLSelectElement>;
-  engine: string;
-  onEngine: ChangeEventHandler<HTMLSelectElement>;
+  controlsProps: {
+    size: number;
+    onSize: ChangeEventHandler<HTMLSelectElement>;
+    palette: string;
+    onPalette: ChangeEventHandler<HTMLSelectElement>;
+    engine: string;
+    onEngine: ChangeEventHandler<HTMLSelectElement>;
+  };
 }
 
-export default function Controls({
-  size,
-  onSize,
-  palette,
-  onPalette,
-  engine,
-  onEngine,
-}: ControlsPropsI) {
+export default function Controls({ controlsProps }: ControlsPropsI) {
+  const { size, onSize, palette, onPalette, engine, onEngine } = controlsProps;
+
   return (
     <div>
       <label>

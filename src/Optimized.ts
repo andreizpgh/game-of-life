@@ -19,21 +19,23 @@ export const init = (p5: p5, size: number, ratio: number): Uint8Array[][] => {
   return Generations;
 };
 
-const setCell = (
+export const setCell = (
   row: number,
   column: number,
   Grid: Uint8Array[],
   size: number
 ): void => {
-  Grid[row][column] |= 0x1;
+  if (!(Grid[row][column] & 0x1)) {
+    Grid[row][column] |= 0x1;
 
-  for (let rowOffset = -1; rowOffset < 2; rowOffset++) {
-    for (let columnOffset = -1; columnOffset < 2; columnOffset++) {
-      if (rowOffset == 0 && columnOffset == 0) continue;
+    for (let rowOffset = -1; rowOffset < 2; rowOffset++) {
+      for (let columnOffset = -1; columnOffset < 2; columnOffset++) {
+        if (rowOffset == 0 && columnOffset == 0) continue;
 
-      Grid[(row + rowOffset + size) % size][
-        (column + columnOffset + size) % size
-      ] += 0x2;
+        Grid[(row + rowOffset + size) % size][
+          (column + columnOffset + size) % size
+        ] += 0x2;
+      }
     }
   }
 };
@@ -70,12 +72,12 @@ export const drawFirstFrame = (
     for (let column = 0; column < size; column++) {
       if (Grid[row][column] & 0x1) {
         p5.fill(colors[Math.floor(p5.random(0, colors.length))]);
-        p5.square(row * unit, column * unit, unit);
+        p5.square(column * unit, row * unit, unit);
         continue;
       }
 
       p5.fill("white");
-      p5.square(row * unit, column * unit, unit);
+      p5.square(column * unit, row * unit, unit);
     }
   }
 };
@@ -101,14 +103,14 @@ export const update = (
       if (Grid[row][column] & 0x1 && (neighbors < 2 || neighbors > 3)) {
         clearCell(row, column, Next, size);
         p5.fill("white");
-        p5.square(row * unit, column * unit, unit);
+        p5.square(column * unit, row * unit, unit);
         continue;
       }
 
       if (!(Grid[row][column] & 0x1) && neighbors == 3) {
         setCell(row, column, Next, size);
         p5.fill(colors[Math.floor(p5.random(0, colors.length))]);
-        p5.square(row * unit, column * unit, unit);
+        p5.square(column * unit, row * unit, unit);
       }
     }
 

@@ -1,14 +1,16 @@
 import { useRef, useEffect } from "react";
 import { generateStartState, findNextGeneration, display } from "./Naive";
-import { init, drawFirstFrame, update } from "./Optimized";
+import { init, drawFirstFrame, setCell, update } from "./Optimized";
 import p5 from "p5";
 
 interface SketchPropsI {
-  canvasSize: number;
-  size: number;
-  ratio: number;
-  colors: string[];
-  engine: string;
+  sketchProps: {
+    canvasSize: number;
+    size: number;
+    ratio: number;
+    colors: string[];
+    engine: string;
+  };
 }
 
 interface enginesI {
@@ -16,46 +18,157 @@ interface enginesI {
   Optimized: any;
 }
 
-export default function Sketch({
-  canvasSize,
-  size,
-  ratio,
-  colors,
-  engine,
-}: SketchPropsI) {
+export default function Sketch({ sketchProps }: SketchPropsI) {
+  const { canvasSize, size, ratio, colors, engine } = sketchProps;
+
   const renderRef = useRef<HTMLDivElement>(null);
   const unit = canvasSize / size;
 
   const Naive = (p5: p5) => {
-    let G = generateStartState(p5, size, ratio);
+    let startButton: p5.Element;
+    let randomizeButton: p5.Element;
+    let resetButton: p5.Element;
+
+    let G = Array.from({ length: size }, () => new Array(size).fill(false));
 
     p5.setup = () => {
       p5.createCanvas(canvasSize, canvasSize);
       p5.noStroke();
-      display(p5, G, size, colors);
+      p5.background("white");
+
+      p5.text("Draw / Randomize", p5.width / 2, p5.height / 2);
+
+      startButton = p5.createButton("Start");
+      startButton.position(10, 10);
+      startButton.mousePressed(handleStartButton);
+
+      randomizeButton = p5.createButton("Randomize");
+      randomizeButton.position(50, 10);
+      randomizeButton.mousePressed(handleRandomizeButton);
+
+      resetButton = p5.createButton("Reset");
+      resetButton.position(125, 10);
+      resetButton.mousePressed(handleResetButton);
+
+      function handleStartButton() {
+        startButton.html(startButton.html() == "Start" ? "Stop" : "Start");
+      }
+
+      function handleRandomizeButton() {
+        G = generateStartState(p5, size, ratio);
+        display(p5, G, size, colors);
+      }
+
+      function handleResetButton() {
+        startButton.html() == "Stop" && startButton.html("Start");
+        G = Array.from({ length: size }, () => new Array(size).fill(false));
+        p5.background("white");
+      }
     };
 
     p5.draw = () => {
-      G = findNextGeneration(G, size);
-      display(p5, G, size, colors);
-      p5.noLoop();
-      //console.log(p5.frameRate());
+      if (startButton.html() == "Start") {
+        if (p5.mouseIsPressed) {
+          let row = p5.floor(p5.mouseY / unit);
+          row = row < 0 || row > size ? 0 : row;
+          let column = p5.floor(p5.mouseX / unit);
+          column = column < 0 || column > size ? 0 : column;
+
+          if (row && column) {
+            p5.fill(colors[Math.floor(p5.random(0, colors.length))]);
+            for (let i = -1; i < 2; i++) {
+              for (let j = -1; j < 2; j++) {
+                G[(row + i + size) % size][(column + j + size) % size] = true;
+                p5.square(
+                  ((column + j + size) % size) * unit,
+                  ((row + i + size) % size) * unit,
+                  unit
+                );
+              }
+            }
+          }
+        }
+      } else {
+        p5.background("white");
+        display(p5, G, size, colors);
+        G = findNextGeneration(G, size);
+      }
     };
   };
 
   const Optimized = (p5: p5) => {
-    const Generations = init(p5, size, ratio);
+    let Generations = [
+      Array.from({ length: size }, () => new Uint8Array(size)),
+      Array.from({ length: size }, () => new Uint8Array(size)),
+    ];
+    let startButton: p5.Element;
+    let randomizeButton: p5.Element;
+    let resetButton: p5.Element;
 
     p5.setup = () => {
       p5.createCanvas(canvasSize, canvasSize);
       p5.noStroke();
-      drawFirstFrame(p5, Generations, size, unit, colors);
+      p5.background("white");
+
+      p5.text("Draw / Randomize", p5.width / 2, p5.height / 2);
+
+      startButton = p5.createButton("Start");
+      startButton.position(10, 10);
+      startButton.mousePressed(handleStartButton);
+
+      randomizeButton = p5.createButton("Randomize");
+      randomizeButton.position(50, 10);
+      randomizeButton.mousePressed(handleRandomizeButton);
+
+      resetButton = p5.createButton("Reset");
+      resetButton.position(125, 10);
+      resetButton.mousePressed(handleResetButton);
+
+      function handleStartButton() {
+        startButton.html() == "Start" && p5.background("white");
+        startButton.html(startButton.html() == "Start" ? "Stop" : "Start");
+      }
+
+      function handleRandomizeButton() {
+        Generations = init(p5, size, ratio);
+        drawFirstFrame(p5, Generations, size, unit, colors);
+      }
+
+      function handleResetButton() {
+        Generations = [
+          Array.from({ length: size }, () => new Uint8Array(size)),
+          Array.from({ length: size }, () => new Uint8Array(size)),
+        ];
+        startButton.html() == "Stop" && startButton.html("Start");
+        p5.background("white");
+      }
     };
 
     p5.draw = () => {
-      update(p5, Generations, size, unit, colors);
-      p5.noLoop();
-      //console.log(p5.frameRate());
+      if (startButton.html() == "Start") {
+        if (p5.mouseIsPressed) {
+          let row = p5.floor(p5.mouseY / unit);
+          row = row < 0 || row > size ? 0 : row;
+          let column = p5.floor(p5.mouseX / unit);
+          column = column < 0 || column > size ? 0 : column;
+
+          if (row && column) {
+            p5.fill(colors[Math.floor(p5.random(0, colors.length))]);
+            for (let i = -1; i < 2; i++) {
+              for (let j = -1; j < 2; j++) {
+                setCell(row, column, Generations[0], size);
+                p5.square(
+                  ((column + j + size) % size) * unit,
+                  ((row + i + size) % size) * unit,
+                  unit
+                );
+              }
+            }
+          }
+        }
+      } else {
+        update(p5, Generations, size, unit, colors);
+      }
     };
   };
 

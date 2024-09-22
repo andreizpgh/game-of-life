@@ -4,7 +4,7 @@ export const generateStartState = (
   p5: p5,
   size: number,
   ratio: number
-): number[][] => {
+): boolean[][] => {
   const variants = new Array(ratio).fill(false).concat([true]);
   const grid = Array.from({ length: size }, () => new Array(size));
 
@@ -19,7 +19,7 @@ export const generateStartState = (
 
 export const display = (
   p5: p5,
-  grid: number[][],
+  grid: boolean[][],
   size: number,
   colors: string[]
 ): void => {
@@ -29,15 +29,15 @@ export const display = (
       if (grid[row][column])
         p5.fill(colors[Math.floor(p5.random(0, colors.length))]);
       else p5.fill("white");
-      p5.square(row * unit, column * unit, unit);
+      p5.square(column * unit, row * unit, unit);
     }
   }
 };
 
 export const findNextGeneration = (
-  grid: number[][],
+  grid: boolean[][],
   size: number
-): number[][] => {
+): boolean[][] => {
   const next = Array.from({ length: size }, () => new Array(size));
 
   for (let row = 0; row < size; row++) {
@@ -53,7 +53,7 @@ export const findNextGeneration = (
 };
 
 const countNeighbors = (
-  grid: number[][],
+  grid: boolean[][],
   size: number,
   row: number,
   column: number
@@ -65,7 +65,7 @@ const countNeighbors = (
       if (rowOffset == 0 && columnOffset == 0) continue;
 
       count +=
-        grid[(row + rowOffset + size) % size][
+        +grid[(row + rowOffset + size) % size][
           (column + columnOffset + size) % size
         ];
     }

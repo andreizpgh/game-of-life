@@ -15,14 +15,13 @@ export default function Controls({ controlsProps }: ControlsPropsI) {
   const { size, onSize, palette, onPalette, engine, onEngine } = controlsProps;
 
   return (
-    <div>
+    <div className="controls">
       <label>
         Size:
         <select value={size} onChange={onSize}>
           <option>50</option>
           <option>100</option>
           <option>200</option>
-          <option>500</option>
         </select>
       </label>
       <label>

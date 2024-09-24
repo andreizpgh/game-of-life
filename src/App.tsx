@@ -55,6 +55,12 @@ export default function App() {
 
   return (
     <div className="app">
+      <div className="info">
+        <span>?</span>
+        <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">
+          What is Game of Life?
+        </a>
+      </div>
       <Sketch sketchProps={sketchProps} />
       <Controls controlsProps={controlsProps} />
     </div>

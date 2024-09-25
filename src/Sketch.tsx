@@ -25,45 +25,84 @@ export default function Sketch({ sketchProps }: SketchPropsI) {
   const unit = canvasSize / size;
 
   const Naive = (p5: p5) => {
+    let G = Array.from({ length: size }, () => new Array(size).fill(false));
+
     let startButton: p5.Element;
     let randomizeButton: p5.Element;
     let resetButton: p5.Element;
     let hint: p5.Element;
     const sketchHeader = p5.createDiv().addClass("sketchHeader");
+    const buttons = p5.createDiv().addClass("buttons");
+    const stats = p5.createDiv().addClass("stats");
+    sketchHeader.child(buttons);
+    sketchHeader.child(stats);
 
-    let frameRate = p5
-      .createSpan("frameRate: " + p5.frameRate())
-      .style("color", "white");
-    let gensCount = 0;
-    let gens = p5.createSpan("Gens: " + gensCount).style("color", "white");
-
-    let G = Array.from({ length: size }, () => new Array(size).fill(false));
+    let frLabel: string;
+    let frameRate: p5.Element;
+    let genCount = 0;
+    let gLabel: string;
+    let generations: p5.Element;
 
     p5.setup = () => {
       p5.createCanvas(canvasSize, canvasSize);
       p5.noStroke();
       p5.background("white");
 
-      startButton = p5.createButton("Start");
+      if (innerWidth > 642) {
+        startButton = p5.createButton("Start", "Start").addClass("bigScreen");
+        randomizeButton = p5.createButton("Randomize").addClass("bigScreen");
+        resetButton = p5.createButton("Reset").addClass("bigScreen");
+        frLabel = "frameRate: ";
+        gLabel = "gen: ";
+      } else {
+        frLabel = "FR: ";
+        gLabel = "G: ";
+        startButton = p5
+          .createButton("", "Start")
+          .addClass("startButton smallScreen");
+        randomizeButton = p5
+          .createButton("")
+          .addClass("randomizeButton smallScreen");
+        resetButton = p5.createButton("").addClass("resetButton smallScreen");
+      }
+
+      frameRate = p5.createSpan(frLabel + p5.frameRate());
+      generations = p5.createSpan(gLabel + genCount);
+
       startButton.mousePressed(handleStartButton);
-      randomizeButton = p5.createButton("Randomize");
       randomizeButton.mousePressed(handleRandomizeButton);
-      resetButton = p5.createButton("Reset");
       resetButton.mousePressed(handleResetButton);
 
-      sketchHeader.child(startButton);
-      sketchHeader.child(randomizeButton);
-      sketchHeader.child(resetButton);
-      sketchHeader.child(frameRate);
-      sketchHeader.child(gens);
+      buttons.child(startButton);
+      buttons.child(randomizeButton);
+      buttons.child(resetButton);
+      stats.child(frameRate);
+      stats.child(generations);
 
       hint = p5.createDiv("Draw or press Randomize").addClass("hint");
 
       function handleStartButton() {
-        if (startButton.html() == "Start")
-          hint.style("transform", "translateX(200px)");
-        else hint.style("transform", "translateX(0px)");
-        startButton.html(startButton.html() == "Start" ? "Stop" : "Start");
+        if (startButton.html()) {
+          if (startButton.value() == "Start") {
+            startButton.html("Stop");
+            startButton.value("Stop");
+            hint.style("transform", "translateX(200px)");
+          } else if (startButton.value() == "Stop") {
+            startButton.html("Start");
+            startButton.value("Start");
+            hint.style("transform", "translateX(0px)");
+          }
+        } else {
+          if (startButton.value() == "Start") {
+            startButton.value("Stop");
+            startButton.class("stopButton smallScreen");
+            hint.style("transform", "translateX(200px)");
+          } else {
+            startButton.value("Start");
+            startButton.class("startButton smallScreen");
+            hint.style("transform", "translateX(0px)");
+          }
+        }
       }
 
       function handleRandomizeButton() {
@@ -72,31 +111,42 @@ export default function Sketch({ sketchProps }: SketchPropsI) {
         display(p5, G, size, colors);
         hint.style("transform", "translateX(200px)");
 
-        gensCount = 0;
-        gens.remove();
-        gens = p5.createSpan("Gens: " + gensCount).style("color", "white");
-        sketchHeader.child(gens);
+        genCount = 0;
+        generations.remove();
+        generations = p5.createSpan(gLabel + genCount);
+        stats.child(generations);
       }
 
       function handleResetButton() {
-        startButton.html() == "Stop" && startButton.html("Start");
+        if (startButton.value() == "Stop") {
+          if (startButton.html()) {
+            startButton.html("Start");
+            startButton.value("Start");
+            hint.style("transform", "translateX(0px)");
+          } else {
+            startButton.value("Start");
+            startButton.class("startButton smallScreen");
+            hint.style("transform", "translateX(0px)");
+          }
+        }
+
         G = Array.from({ length: size }, () => new Array(size).fill(false));
         p5.background("white");
         hint.style("transform", "translateX(0px)");
 
         frameRate.remove();
-        frameRate = p5.createSpan("frameRate: 0").style("color", "white");
-        sketchHeader.child(frameRate);
+        frameRate = p5.createSpan(frLabel + "0");
+        stats.child(frameRate);
 
-        gensCount = 0;
-        gens.remove();
-        gens = p5.createSpan("Gens: " + gensCount).style("color", "white");
-        sketchHeader.child(gens);
+        genCount = 0;
+        generations.remove();
+        generations = p5.createSpan(gLabel + genCount);
+        stats.child(generations);
       }
     };
 
     p5.draw = () => {
-      if (startButton.html() == "Start") {
+      if (startButton.value() == "Start") {
         if (p5.mouseIsPressed) {
           let row = p5.floor(p5.mouseY / unit);
           row = row < 0 || row > size ? 0 : row;
@@ -118,17 +168,15 @@ export default function Sketch({ sketchProps }: SketchPropsI) {
           }
         }
       } else {
-        gensCount++;
-        if (gensCount % 10 == 0) {
+        genCount++;
+        if (genCount % 10 == 0) {
           frameRate.remove();
-          frameRate = p5
-            .createSpan("frameRate: " + p5.frameRate().toPrecision(3))
-            .style("color", "white");
-          sketchHeader.child(frameRate);
+          frameRate = p5.createSpan(frLabel + p5.frameRate().toPrecision(2));
+          stats.child(frameRate);
         }
-        gens.remove();
-        gens = p5.createSpan("Gens: " + gensCount).style("color", "white");
-        sketchHeader.child(gens);
+        generations.remove();
+        generations = p5.createSpan(gLabel + genCount);
+        stats.child(generations);
 
         p5.background("white");
         display(p5, G, size, colors);
@@ -142,46 +190,83 @@ export default function Sketch({ sketchProps }: SketchPropsI) {
       Array.from({ length: size }, () => new Uint8Array(size)),
       Array.from({ length: size }, () => new Uint8Array(size)),
     ];
+
     let startButton: p5.Element;
     let randomizeButton: p5.Element;
     let resetButton: p5.Element;
     let hint: p5.Element;
-
     const sketchHeader = p5.createDiv().addClass("sketchHeader");
+    const buttons = p5.createDiv().addClass("buttons");
+    const stats = p5.createDiv().addClass("stats");
+    sketchHeader.child(buttons);
+    sketchHeader.child(stats);
 
-    let frameRate = p5
-      .createSpan("frameRate: " + p5.frameRate())
-      .style("color", "white");
-    let gensCount = 0;
-    let gens = p5.createSpan("Gens: " + gensCount).style("color", "white");
+    let frLabel: string;
+    let frameRate: p5.Element;
+    let genCount = 0;
+    let gLabel: string;
+    let generations: p5.Element;
 
     p5.setup = () => {
       p5.createCanvas(canvasSize, canvasSize);
       p5.noStroke();
       p5.background("white");
 
-      startButton = p5.createButton("Start");
+      if (innerWidth > 642) {
+        startButton = p5.createButton("Start", "Start").addClass("bigScreen");
+        randomizeButton = p5.createButton("Randomize").addClass("bigScreen");
+        resetButton = p5.createButton("Reset").addClass("bigScreen");
+        frLabel = "frameRate: ";
+        gLabel = "gen: ";
+      } else {
+        frLabel = "FR: ";
+        gLabel = "G: ";
+        startButton = p5
+          .createButton("", "Start")
+          .addClass("startButton smallScreen");
+        randomizeButton = p5
+          .createButton("")
+          .addClass("randomizeButton smallScreen");
+        resetButton = p5.createButton("").addClass("resetButton smallScreen");
+      }
+
+      frameRate = p5.createSpan(frLabel + p5.frameRate());
+      generations = p5.createSpan(gLabel + genCount);
+
       startButton.mousePressed(handleStartButton);
-      randomizeButton = p5.createButton("Randomize");
       randomizeButton.mousePressed(handleRandomizeButton);
-      resetButton = p5.createButton("Reset");
       resetButton.mousePressed(handleResetButton);
 
-      sketchHeader.child(startButton);
-      sketchHeader.child(randomizeButton);
-      sketchHeader.child(resetButton);
-      sketchHeader.child(frameRate);
-      sketchHeader.child(gens);
+      buttons.child(startButton);
+      buttons.child(randomizeButton);
+      buttons.child(resetButton);
+      stats.child(frameRate);
+      stats.child(generations);
 
       hint = p5.createDiv("Draw or press Randomize").addClass("hint");
 
       function handleStartButton() {
-        if (startButton.html() == "Start")
-          hint.style("transform", "translateX(200px)");
-        else hint.style("transform", "translateX(0px)");
-
-        startButton.html() == "Start" && p5.background("white");
-        startButton.html(startButton.html() == "Start" ? "Stop" : "Start");
+        if (startButton.html()) {
+          if (startButton.value() == "Start") {
+            startButton.html("Stop");
+            startButton.value("Stop");
+            hint.style("transform", "translateX(200px)");
+          } else if (startButton.value() == "Stop") {
+            startButton.html("Start");
+            startButton.value("Start");
+            hint.style("transform", "translateX(0px)");
+          }
+        } else {
+          if (startButton.value() == "Start") {
+            startButton.value("Stop");
+            startButton.class("stopButton smallScreen");
+            hint.style("transform", "translateX(200px)");
+          } else {
+            startButton.value("Start");
+            startButton.class("startButton smallScreen");
+            hint.style("transform", "translateX(0px)");
+          }
+        }
       }
 
       function handleRandomizeButton() {
@@ -190,34 +275,45 @@ export default function Sketch({ sketchProps }: SketchPropsI) {
         drawFirstFrame(p5, Generations, size, unit, colors);
         hint.style("transform", "translateX(200px)");
 
-        gensCount = 0;
-        gens.remove();
-        gens = p5.createSpan("Gens: " + gensCount).style("color", "white");
-        sketchHeader.child(gens);
+        genCount = 0;
+        generations.remove();
+        generations = p5.createSpan(gLabel + genCount);
+        stats.child(generations);
       }
 
       function handleResetButton() {
+        if (startButton.value() == "Stop") {
+          if (startButton.html()) {
+            startButton.html("Start");
+            startButton.value("Start");
+            hint.style("transform", "translateX(0px)");
+          } else {
+            startButton.value("Start");
+            startButton.class("startButton smallScreen");
+            hint.style("transform", "translateX(0px)");
+          }
+        }
+
         Generations = [
           Array.from({ length: size }, () => new Uint8Array(size)),
           Array.from({ length: size }, () => new Uint8Array(size)),
         ];
-        startButton.html() == "Stop" && startButton.html("Start");
         p5.background("white");
         hint.style("transform", "translateX(0px)");
 
         frameRate.remove();
-        frameRate = p5.createSpan("frameRate: 0").style("color", "white");
-        sketchHeader.child(frameRate);
+        frameRate = p5.createSpan(frLabel + "0");
+        stats.child(frameRate);
 
-        gensCount = 0;
-        gens.remove();
-        gens = p5.createSpan("Gens: " + gensCount).style("color", "white");
-        sketchHeader.child(gens);
+        genCount = 0;
+        generations.remove();
+        generations = p5.createSpan(gLabel + genCount);
+        stats.child(generations);
       }
     };
 
     p5.draw = () => {
-      if (startButton.html() == "Start") {
+      if (startButton.value() == "Start") {
         if (p5.mouseIsPressed) {
           let row = p5.floor(p5.mouseY / unit);
           row = row < 0 || row > size ? 0 : row;
@@ -228,7 +324,7 @@ export default function Sketch({ sketchProps }: SketchPropsI) {
             p5.fill(colors[Math.floor(p5.random(0, colors.length))]);
             for (let i = -1; i < 2; i++) {
               for (let j = -1; j < 2; j++) {
-                setCell(row, column, Generations[0], size);
+                setCell(row + i, column + j, Generations[0], size);
                 p5.square(
                   ((column + j + size) % size) * unit,
                   ((row + i + size) % size) * unit,
@@ -239,17 +335,15 @@ export default function Sketch({ sketchProps }: SketchPropsI) {
           }
         }
       } else {
-        gensCount++;
-        if (gensCount % 10 == 0) {
+        genCount++;
+        if (genCount % 10 == 0) {
           frameRate.remove();
-          frameRate = p5
-            .createSpan("frameRate: " + p5.frameRate().toPrecision(3))
-            .style("color", "white");
-          sketchHeader.child(frameRate);
+          frameRate = p5.createSpan(frLabel + p5.frameRate().toPrecision(2));
+          stats.child(frameRate);
         }
-        gens.remove();
-        gens = p5.createSpan("Gens: " + gensCount).style("color", "white");
-        sketchHeader.child(gens);
+        generations.remove();
+        generations = p5.createSpan(gLabel + genCount);
+        stats.child(generations);
 
         update(p5, Generations, size, unit, colors);
       }

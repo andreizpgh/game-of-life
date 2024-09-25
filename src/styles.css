@@ -11,11 +11,28 @@ html {
   padding: 0;
 }
 
+@font-face {
+  font-family: "Inter";
+  src: url("../assets/Inter-Regular.woff2"), url("../assets/Inter-Regular.woff");
+  font-weight: 400;
+  font-display: swap;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("../assets/Inter-Bold.woff2"), url("../assets/Inter-Bold.woff");
+  font-weight: 700;
+  font-display: swap;
+  font-style: normal;
+}
 html,
 body,
 #root {
+  font-family: "Inter", sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
   height: 100%;
-  overflow: hidden;
 }
 
 .wrapper {
@@ -31,21 +48,27 @@ body,
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  overflow: hidden;
 }
 
 .app {
+  margin-top: 100px;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 10px;
 }
 
 .sketch {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 10px;
 }
 
 canvas {
+  margin: auto;
   border-radius: 1rem;
   cursor: pointer;
 }
@@ -56,15 +79,27 @@ canvas {
   padding: 0 30px 0 30px;
   align-items: center;
   gap: 30px;
-  position: relative;
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
 }
 
 button {
   cursor: pointer;
-  width: 100px;
-  height: 30px;
   border: none;
-  border-radius: 0.5rem;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  color: white;
+}
+
+.stats * {
+  width: 110px;
 }
 
 .hint {
@@ -100,6 +135,7 @@ button {
   color: black;
   transition: all 0.3s ease;
   z-index: 4;
+  overflow: hidden;
 }
 
 .info a {
@@ -107,19 +143,17 @@ button {
   text-wrap: nowrap;
 }
 
-.info:hover span {
-  display: none;
-}
-
-.info:hover a {
-  display: block;
-}
-
 .info:hover {
   opacity: 1;
   width: 220px;
   height: 70px;
   border-radius: 0.5rem;
+}
+.info:hover span {
+  display: none;
+}
+.info:hover a {
+  display: block;
 }
 
 .controls {
@@ -143,4 +177,85 @@ select {
   height: 30px;
   text-align: center;
   text-align-last: center;
+}
+
+.bigScreen {
+  width: 100px;
+  height: 30px;
+  border-radius: 0.5rem;
+}
+
+.smallScreen {
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  background-repeat: no-repeat;
+}
+
+.startButton {
+  background-position-x: 57%;
+  background-position-y: 55%;
+  background-size: 14px;
+  background-image: url(../assets/play.svg);
+}
+
+.stopButton {
+  background-position-x: 52%;
+  background-position-y: 50%;
+  background-size: 12px;
+  background-image: url(../assets/stop.svg);
+}
+
+.randomizeButton {
+  background-position-x: 52%;
+  background-position-y: 50%;
+  background-size: 12px;
+  background-image: url(../assets/r.svg);
+}
+
+.resetButton {
+  background-position-x: 50%;
+  background-position-y: 53%;
+  background-size: 18px;
+  background-image: url(../assets/rotate.svg);
+}
+
+@media (max-width: 768px) {
+  .controls {
+    gap: 20px;
+  }
+}
+
+@media (max-width: 642px) {
+  .app {
+    gap: 20px;
+  }
+  .sketch {
+    gap: 20px;
+  }
+  .buttons {
+    gap: 20px;
+  }
+  .stats * {
+    width: 60px;
+  }
+  .controls {
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .info {
+    margin: 100px 0 20px 0;
+    position: static;
+    width: 90%;
+    opacity: 1;
+    height: 70px;
+    border-radius: 0.5rem;
+  }
+  .info span {
+    display: none;
+  }
+  .info a {
+    display: block;
+  }
 }

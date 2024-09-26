@@ -29,129 +29,135 @@ export default function Sketch({ sketchProps }: SketchPropsI) {
   const engineInstance = (p5: p5) => {
     let grid = createEmptyGrid();
 
-    const sketchHeader = p5.createDiv().addClass("sketchHeader");
-    const buttons = p5.createDiv().addClass("buttons");
-    const stats = p5.createDiv().addClass("stats");
-    sketchHeader.child(buttons);
-    sketchHeader.child(stats);
+    let sketchHeader: p5.Element;
+    let buttons: p5.Element;
+    let stats: p5.Element;
 
     let startButton: p5.Element;
     let randomizeButton: p5.Element;
     let resetButton: p5.Element;
 
+    let frameRate: p5.Element;
     let frLabel: string;
-    let genCount = 0;
+    let generations: p5.Element;
     let genLabel: string;
+    let genCount = 0;
 
-    if (innerWidth > 642) {
-      startButton = p5.createButton("Start", "Start").addClass("bigScreen");
-      randomizeButton = p5.createButton("Randomize").addClass("bigScreen");
-      resetButton = p5.createButton("Reset").addClass("bigScreen");
+    p5.setup = () => {
+      sketchHeader = p5.createDiv().addClass("sketchHeader");
+      buttons = p5.createDiv().addClass("buttons");
+      stats = p5.createDiv().addClass("stats");
+      sketchHeader.child(buttons);
+      sketchHeader.child(stats);
 
-      frLabel = "frameRate: ";
-      genLabel = "gen: ";
-    } else {
-      startButton = p5
-        .createButton("", "Start")
-        .addClass("startSVG smallScreen");
-      randomizeButton = p5
-        .createButton("")
-        .addClass("randomizeSVG smallScreen");
-      resetButton = p5.createButton("").addClass("resetSVG smallScreen");
+      if (innerWidth > 642) {
+        startButton = p5.createButton("Start", "Start").addClass("bigScreen");
+        randomizeButton = p5.createButton("Randomize").addClass("bigScreen");
+        resetButton = p5.createButton("Reset").addClass("bigScreen");
 
-      frLabel = "FR: ";
-      genLabel = "G: ";
-    }
-
-    let frameRate = p5.createSpan(frLabel + p5.frameRate());
-    let generations = p5.createSpan(genLabel + genCount);
-
-    startButton.mousePressed(handleStartButton);
-    randomizeButton.mousePressed(handleRandomizeButton);
-    resetButton.mousePressed(handleResetButton);
-
-    buttons.child(startButton);
-    buttons.child(randomizeButton);
-    buttons.child(resetButton);
-
-    stats.child(frameRate);
-    stats.child(generations);
-
-    const hint = p5.createDiv("Draw or press Randomize").addClass("hint");
-
-    function handleStartButton() {
-      if (startButton.html()) {
-        if (startButton.value() == "Start") {
-          startButton.html("Stop");
-          startButton.value("Stop");
-          hint.style("transform", "translateX(200px)");
-        } else {
-          startButton.html("Start");
-          startButton.value("Start");
-          hint.style("transform", "translateX(0px)");
-        }
+        frLabel = "frameRate: ";
+        genLabel = "gen: ";
       } else {
-        if (startButton.value() == "Start") {
-          startButton.value("Stop");
-          startButton.class("stopSVG smallScreen");
-          hint.style("transform", "translateX(200px)");
-        } else {
-          startButton.value("Start");
-          startButton.class("startSVG smallScreen");
-          hint.style("transform", "translateX(0px)");
-        }
-      }
-    }
+        startButton = p5
+          .createButton("", "Start")
+          .addClass("startSVG smallScreen");
+        randomizeButton = p5
+          .createButton("")
+          .addClass("randomizeSVG smallScreen");
+        resetButton = p5.createButton("").addClass("resetSVG smallScreen");
 
-    function handleRandomizeButton() {
-      p5.background("white");
-
-      if (engine == "Naive") {
-        grid = generateStartState(p5, size);
-        display(p5, grid as boolean[][], size, colors);
-      } else {
-        grid = init(p5, size);
-        drawFirstFrame(p5, grid as Uint8Array[][], size, unit, colors);
+        frLabel = "FR: ";
+        genLabel = "G: ";
       }
 
-      genCount = 0;
-      generations.remove();
+      frameRate = p5.createSpan(frLabel + p5.frameRate());
       generations = p5.createSpan(genLabel + genCount);
+
+      startButton.mousePressed(handleStartButton);
+      randomizeButton.mousePressed(handleRandomizeButton);
+      resetButton.mousePressed(handleResetButton);
+
+      buttons.child(startButton);
+      buttons.child(randomizeButton);
+      buttons.child(resetButton);
+
+      stats.child(frameRate);
       stats.child(generations);
 
-      hint.style("transform", "translateX(200px)");
-    }
+      const hint = p5.createDiv("Draw or press Randomize").addClass("hint");
 
-    function handleResetButton() {
-      p5.background("white");
-
-      if (startButton.value() == "Stop") {
+      function handleStartButton() {
         if (startButton.html()) {
-          startButton.html("Start");
-          startButton.value("Start");
+          if (startButton.value() == "Start") {
+            startButton.html("Stop");
+            startButton.value("Stop");
+            hint.style("transform", "translateX(200px)");
+          } else {
+            startButton.html("Start");
+            startButton.value("Start");
+            hint.style("transform", "translateX(0px)");
+          }
         } else {
-          startButton.value("Start");
-          startButton.class("startSVG smallScreen");
+          if (startButton.value() == "Start") {
+            startButton.value("Stop");
+            startButton.class("stopSVG smallScreen");
+            hint.style("transform", "translateX(200px)");
+          } else {
+            startButton.value("Start");
+            startButton.class("startSVG smallScreen");
+            hint.style("transform", "translateX(0px)");
+          }
         }
+      }
+
+      function handleRandomizeButton() {
+        p5.background("white");
+
+        if (engine == "Naive") {
+          grid = generateStartState(p5, size);
+          display(p5, grid as boolean[][], size, colors);
+        } else {
+          grid = init(p5, size);
+          drawFirstFrame(p5, grid as Uint8Array[][], size, unit, colors);
+        }
+
+        genCount = 0;
+        generations.remove();
+        generations = p5.createSpan(genLabel + genCount);
+        stats.child(generations);
+
+        hint.style("transform", "translateX(200px)");
+      }
+
+      function handleResetButton() {
+        p5.background("white");
+
+        if (startButton.value() == "Stop") {
+          if (startButton.html()) {
+            startButton.html("Start");
+            startButton.value("Start");
+          } else {
+            startButton.value("Start");
+            startButton.class("startSVG smallScreen");
+          }
+
+          hint.style("transform", "translateX(0px)");
+        }
+
+        grid = createEmptyGrid();
+
+        frameRate.remove();
+        frameRate = p5.createSpan(frLabel + "0");
+        stats.child(frameRate);
+
+        genCount = 0;
+        generations.remove();
+        generations = p5.createSpan(genLabel + genCount);
+        stats.child(generations);
 
         hint.style("transform", "translateX(0px)");
       }
 
-      grid = createEmptyGrid();
-
-      frameRate.remove();
-      frameRate = p5.createSpan(frLabel + "0");
-      stats.child(frameRate);
-
-      genCount = 0;
-      generations.remove();
-      generations = p5.createSpan(genLabel + genCount);
-      stats.child(generations);
-
-      hint.style("transform", "translateX(0px)");
-    }
-
-    p5.setup = () => {
       p5.createCanvas(canvasSize, canvasSize);
       p5.noStroke();
       p5.background("white");

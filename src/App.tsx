@@ -17,11 +17,11 @@ export default function App() {
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth > 900) setCanvasSize(800);
-      if (window.innerWidth <= 900) setCanvasSize(600);
-      if (window.innerWidth <= 642) setCanvasSize(500);
-      if (window.innerWidth <= 546) setCanvasSize(400);
-      if (window.innerWidth <= 442) setCanvasSize(300);
+      if (innerWidth > 900) setCanvasSize(800);
+      if (innerWidth <= 900) setCanvasSize(600);
+      if (innerWidth <= 642) setCanvasSize(500);
+      if (innerWidth <= 546) setCanvasSize(400);
+      if (innerWidth <= 442) setCanvasSize(300);
     };
 
     window.addEventListener("resize", handleResize);

@@ -1,11 +1,7 @@
 import p5 from "p5";
 
-export const generateStartState = (
-  p5: p5,
-  size: number,
-  ratio: number
-): boolean[][] => {
-  const variants = new Array(ratio).fill(false).concat([true]);
+export const generateStartState = (p5: p5, size: number): boolean[][] => {
+  const variants = [false, false, false, false, true];
   const grid = Array.from({ length: size }, () => new Array(size));
 
   for (let row = 0; row < size; row++) {

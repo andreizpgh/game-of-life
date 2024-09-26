@@ -1,13 +1,13 @@
 import p5 from "p5";
 
-export const init = (p5: p5, size: number, ratio: number): Uint8Array[][] => {
+export const init = (p5: p5, size: number): Uint8Array[][] => {
   const Generations = [
     Array.from({ length: size }, () => new Uint8Array(size)),
     Array.from({ length: size }, () => new Uint8Array(size)),
   ];
 
   const Grid = Generations[0];
-  const variants = new Array(ratio).fill(false).concat([true]);
+  const variants = [false, false, false, false, true];
 
   for (let row = 0; row < size; row++) {
     for (let column = 0; column < size; column++) {

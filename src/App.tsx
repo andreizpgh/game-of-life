@@ -2,7 +2,7 @@ import { ChangeEvent, useEffect, useState } from "react";
 import Sketch from "./Sketch";
 import Controls from "./Controls";
 
-interface colorPalettesI {
+interface ColorPalettesI {
   black: string[];
   retroPunch: string[];
   underFerns: string[];
@@ -13,12 +13,12 @@ export default function App() {
   const [selectedPalette, setPalette] = useState("black");
   const [selectedSize, setSize] = useState(100);
   const [selectedEngine, setEngine] = useState("Naive");
-  const [canvasSize, setCanvasSize] = useState(700);
+  const [canvasSize, setCanvasSize] = useState(800);
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth > 768) setCanvasSize(700);
-      if (window.innerWidth <= 768) setCanvasSize(600);
+      if (window.innerWidth > 900) setCanvasSize(800);
+      if (window.innerWidth <= 900) setCanvasSize(600);
       if (window.innerWidth <= 642) setCanvasSize(500);
       if (window.innerWidth <= 546) setCanvasSize(400);
       if (window.innerWidth <= 442) setCanvasSize(300);
@@ -32,9 +32,7 @@ export default function App() {
     };
   }, []);
 
-  const ratio = 4;
-
-  const colorPalettes: colorPalettesI = {
+  const colorPalettes: ColorPalettesI = {
     black: ["black"],
     retroPunch: ["#f8d210", "#fa26a0", "#f51720"],
     underFerns: ["#116530", "#21b6a8", "#18a558"],
@@ -56,8 +54,7 @@ export default function App() {
   const sketchProps = {
     canvasSize: canvasSize,
     size: selectedSize,
-    ratio: ratio,
-    colors: colorPalettes[selectedPalette as keyof colorPalettesI],
+    colors: colorPalettes[selectedPalette as keyof ColorPalettesI],
     engine: selectedEngine,
   };
 

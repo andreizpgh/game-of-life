@@ -19,24 +19,16 @@ html {
   font-style: normal;
 }
 
-@font-face {
-  font-family: "Inter";
-  src: url("../assets/Inter-Bold.woff2"), url("../assets/Inter-Bold.woff");
-  font-weight: 700;
-  font-display: swap;
-  font-style: normal;
-}
 html,
 body,
 #root {
   font-family: "Inter", sans-serif;
   font-size: 1rem;
   font-weight: 400;
-  height: 100%;
+  height: 100vh;
 }
 
 .wrapper {
-  background: rgb(2, 0, 36);
   background: linear-gradient(
     42deg,
     rgba(2, 0, 36, 1) 0%,
@@ -46,8 +38,8 @@ body,
   min-height: 100%;
   width: 100%;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   position: relative;
   overflow: hidden;
 }
@@ -76,8 +68,8 @@ canvas {
 .sketchHeader {
   display: flex;
   justify-content: space-between;
-  padding: 0 30px 0 30px;
   align-items: center;
+  padding: 0 30px 0 30px;
   gap: 30px;
 }
 
@@ -86,7 +78,7 @@ canvas {
   gap: 10px;
 }
 
-button {
+.buttons * {
   cursor: pointer;
   border: none;
 }
@@ -94,8 +86,8 @@ button {
 .stats {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
   color: white;
+  gap: 10px;
 }
 
 .stats * {
@@ -108,16 +100,15 @@ button {
   align-items: center;
   background-color: white;
   opacity: 0.9;
-  color: rgba(50, 50, 50);
   border-radius: 0.3rem;
   width: 170px;
   height: 30px;
+  color: rgba(50, 50, 50);
+  font-size: 0.7rem;
   position: absolute;
   top: 1%;
   right: 1%;
-  text-align: center;
   transition: transform 0.5s ease;
-  font-size: 0.7rem;
 }
 
 .info {
@@ -133,9 +124,9 @@ button {
   justify-content: center;
   align-items: center;
   color: black;
-  transition: all 0.3s ease;
   z-index: 4;
   overflow: hidden;
+  transition: all 0.3s ease;
 }
 
 .info a {
@@ -149,24 +140,27 @@ button {
   height: 70px;
   border-radius: 0.5rem;
 }
-.info:hover span {
-  display: none;
-}
+
 .info:hover a {
   display: block;
 }
 
+.info:hover span {
+  display: none;
+}
+
 .controls {
   display: flex;
-  gap: 50px;
   justify-content: center;
   color: white;
+  margin-bottom: 40px;
+  gap: 50px;
 }
 
 label {
   display: flex;
-  gap: 5px;
   align-items: center;
+  gap: 5px;
 }
 
 select {
@@ -176,7 +170,6 @@ select {
   width: 100px;
   height: 30px;
   text-align: center;
-  text-align-last: center;
 }
 
 .bigScreen {
@@ -186,34 +179,34 @@ select {
 }
 
 .smallScreen {
-  height: 30px;
   width: 30px;
+  height: 30px;
   border-radius: 50%;
   background-repeat: no-repeat;
 }
 
-.startButton {
+.startSVG {
   background-position-x: 57%;
   background-position-y: 55%;
   background-size: 14px;
   background-image: url(../assets/play.svg);
 }
 
-.stopButton {
+.stopSVG {
   background-position-x: 52%;
   background-position-y: 50%;
   background-size: 12px;
   background-image: url(../assets/stop.svg);
 }
 
-.randomizeButton {
+.randomizeSVG {
   background-position-x: 52%;
   background-position-y: 50%;
   background-size: 12px;
   background-image: url(../assets/r.svg);
 }
 
-.resetButton {
+.resetSVG {
   background-position-x: 50%;
   background-position-y: 53%;
   background-size: 18px;
@@ -233,29 +226,35 @@ select {
   .sketch {
     gap: 20px;
   }
-  .buttons {
+  .sketchHeader {
     gap: 20px;
   }
+  .buttons {
+    padding-left: 20px;
+    gap: 15px;
+  }
+  .stats {
+    gap: 0px;
+  }
   .stats * {
-    width: 60px;
+    width: 70px;
   }
   .controls {
     align-items: center;
     flex-direction: column;
   }
-
   .info {
-    margin: 100px 0 20px 0;
+    margin: 60px 0 20px 0;
     position: static;
     width: 90%;
     opacity: 1;
     height: 70px;
     border-radius: 0.5rem;
   }
-  .info span {
-    display: none;
-  }
   .info a {
     display: block;
+  }
+  .info span {
+    display: none;
   }
 }

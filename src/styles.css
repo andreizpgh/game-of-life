@@ -218,9 +218,10 @@ select {
   body,
   #root {
     height: 100vh;
-    overscroll-behavior: contrain;
   }
-
+  canvas {
+    touch-action: none;
+  }
   .controls {
     gap: 20px;
   }

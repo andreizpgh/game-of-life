@@ -25,7 +25,7 @@ body,
   font-family: "Inter", sans-serif;
   font-size: 1rem;
   font-weight: 400;
-  height: 100vh;
+  height: 100%;
 }
 
 .wrapper {
@@ -214,6 +214,12 @@ select {
 }
 
 @media (max-width: 768px) {
+  html,
+  body,
+  #root {
+    height: 100vh;
+  }
+
   .controls {
     gap: 20px;
   }

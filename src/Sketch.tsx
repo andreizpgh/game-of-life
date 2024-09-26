@@ -131,7 +131,7 @@ export default function Sketch({ sketchProps }: SketchPropsI) {
           startButton.value("Start");
         } else {
           startButton.value("Start");
-          startButton.class("startButton smallScreen");
+          startButton.class("startSVG smallScreen");
         }
 
         hint.style("transform", "translateX(0px)");

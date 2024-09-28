@@ -91,7 +91,7 @@ canvas {
 }
 
 .stats * {
-  width: 110px;
+  width: 115px;
 }
 
 .hint {
@@ -213,7 +213,7 @@ select {
   background-image: url(../assets/rotate.svg);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 800px) {
   html,
   body,
   #root {

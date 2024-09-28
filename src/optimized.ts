@@ -19,6 +19,24 @@ export const init = (p5: p5, size: number): Uint8Array[][] => {
   return Generations;
 };
 
+// [
+//  [0, 0, false]
+//  [false, true, false]
+//  [false, false, false]
+//  ]
+//
+//  alive/dead N-neighbors
+//  [boolean, number]
+//  [true, 6]
+//  64 bit
+//  0-8
+//  0000
+//  1000
+//  bit bit bit bit bit => 5 bit
+//  0 0 0 1000 1 & 1 = 00000001
+//  0 0 0 1000 1 & 0b00000001 = 00000001
+//  0 0 0 1000 1 & 0x1 = 00001000 = 8
+//  0 0 0 0000 0 => 0
 export const setCell = (
   row: number,
   column: number,
@@ -113,7 +131,7 @@ export const update = (
         p5.square(column * unit, row * unit, unit);
       }
     }
-
-    Generations[0] = Next;
   }
+
+  Generations[0] = Next;
 };

@@ -1,22 +1,21 @@
 import { useRef, useEffect } from "react";
 import p5 from "p5";
-import { generateStartState, findNextGeneration, display } from "./Naive";
-import { init, drawFirstFrame, setCell, update } from "./Optimized";
+import { EngineVersionE } from "./App";
+import { generateStartState, findNextGeneration, display } from "./naive";
+import { init, drawFirstFrame, setCell, update } from "./optimized";
 
 interface SketchPropsI {
-  sketchProps: {
-    canvasSize: number;
-    size: number;
-    colors: string[];
-    engine: string;
-  };
+  canvasSize: number;
+  size: number;
+  colors: string[];
+  engine: EngineVersionE;
 }
 
-export default function Sketch({ sketchProps }: SketchPropsI) {
-  const { canvasSize, size, colors, engine } = sketchProps;
+export default function Sketch(props: SketchPropsI) {
+  const { canvasSize, size, colors, engine } = props;
 
-  const createEmptyGrid = (engineVersion = engine) =>
-    engineVersion == "Naive"
+  const createEmptyGrid = (engine: EngineVersionE) =>
+    engine == EngineVersionE.Naive
       ? Array.from({ length: size }, () => new Array(size).fill(false))
       : [
           Array.from({ length: size }, () => new Uint8Array(size)),
@@ -27,7 +26,7 @@ export default function Sketch({ sketchProps }: SketchPropsI) {
   const unit = canvasSize / size;
 
   const engineInstance = (p5: p5) => {
-    let grid = createEmptyGrid();
+    let grid = createEmptyGrid(engine);
 
     let sketchHeader: p5.Element;
     let buttons: p5.Element;
@@ -113,7 +112,7 @@ export default function Sketch({ sketchProps }: SketchPropsI) {
       function handleRandomizeButton() {
         p5.background("white");
 
-        if (engine == "Naive") {
+        if (engine == EngineVersionE.Naive) {
           grid = generateStartState(p5, size);
           display(p5, grid as boolean[][], size, colors);
         } else {
@@ -144,7 +143,7 @@ export default function Sketch({ sketchProps }: SketchPropsI) {
           hint.style("transform", "translateX(0px)");
         }
 
-        grid = createEmptyGrid();
+        grid = createEmptyGrid(engine);
 
         frameRate.remove();
         frameRate = p5.createSpan(frLabel + "0");
@@ -173,7 +172,8 @@ export default function Sketch({ sketchProps }: SketchPropsI) {
 
           for (let i = -1; i < 2; i++) {
             for (let j = -1; j < 2; j++) {
-              if (engine == "Naive") grid[row + i][column + j] = true;
+              if (engine == EngineVersionE.Naive)
+                grid[row + i][column + j] = true;
               else setCell(row + i, column + j, grid[0], size);
 
               p5.square((column + j) * unit, (row + i) * unit, unit);
@@ -192,7 +192,7 @@ export default function Sketch({ sketchProps }: SketchPropsI) {
         generations = p5.createSpan(genLabel + genCount);
         stats.child(generations);
 
-        if (engine == "Naive") {
+        if (engine == EngineVersionE.Naive) {
           p5.background("white");
           display(p5, grid, size, colors);
           grid = findNextGeneration(grid, size);

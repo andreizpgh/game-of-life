@@ -9,19 +9,23 @@ interface ColorPalettesI {
   deepBlue: string[];
 }
 
+export enum EngineVersionE {
+  Naive = "Naive",
+  Optimized = "Optimized",
+}
+
 export default function App() {
   const [selectedPalette, setPalette] = useState("black");
   const [selectedSize, setSize] = useState(100);
-  const [selectedEngine, setEngine] = useState("Naive");
+  const [selectedEngine, setEngine] = useState(EngineVersionE.Naive);
   const [canvasSize, setCanvasSize] = useState(800);
 
   useEffect(() => {
     const handleResize = () => {
-      if (innerWidth > 900) setCanvasSize(800);
-      if (innerWidth <= 900) setCanvasSize(600);
-      if (innerWidth <= 642) setCanvasSize(500);
-      if (innerWidth <= 546) setCanvasSize(400);
-      if (innerWidth <= 442) setCanvasSize(300);
+      if (innerWidth > 800) setCanvasSize(750);
+      if (innerWidth <= 800) setCanvasSize(600);
+      if (innerWidth <= 620) setCanvasSize(450);
+      if (innerWidth <= 470) setCanvasSize(300);
     };
 
     window.addEventListener("resize", handleResize);
@@ -48,7 +52,7 @@ export default function App() {
   }
 
   function handleEngine(e: ChangeEvent<HTMLSelectElement>) {
-    setEngine(e.target.value);
+    setEngine(e.target.value as EngineVersionE);
   }
 
   const sketchProps = {
@@ -69,8 +73,8 @@ export default function App() {
 
   return (
     <div className="app">
-      <Sketch sketchProps={sketchProps} />
-      <Controls controlsProps={controlsProps} />
+      <Sketch {...sketchProps} />
+      <Controls {...controlsProps} />
       <div className="info">
         <span>?</span>
         <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">

@@ -1,18 +1,17 @@
 import { ChangeEventHandler } from "react";
+import { EngineVersionE } from "./App";
 
 interface ControlsPropsI {
-  controlsProps: {
-    size: number;
-    onSize: ChangeEventHandler<HTMLSelectElement>;
-    palette: string;
-    onPalette: ChangeEventHandler<HTMLSelectElement>;
-    engine: string;
-    onEngine: ChangeEventHandler<HTMLSelectElement>;
-  };
+  size: number;
+  onSize: ChangeEventHandler<HTMLSelectElement>;
+  palette: string;
+  onPalette: ChangeEventHandler<HTMLSelectElement>;
+  engine: EngineVersionE;
+  onEngine: ChangeEventHandler<HTMLSelectElement>;
 }
 
-export default function Controls({ controlsProps }: ControlsPropsI) {
-  const { size, onSize, palette, onPalette, engine, onEngine } = controlsProps;
+export default function Controls(props: ControlsPropsI) {
+  const { size, onSize, palette, onPalette, engine, onEngine } = props;
 
   return (
     <div className="controls">
@@ -21,7 +20,8 @@ export default function Controls({ controlsProps }: ControlsPropsI) {
         <select value={size} onChange={onSize}>
           <option>50</option>
           <option>100</option>
-          <option>200</option>
+          <option>150</option>
+          {innerWidth > 642 && <option>250</option>}
         </select>
       </label>
       <label>
@@ -36,8 +36,8 @@ export default function Controls({ controlsProps }: ControlsPropsI) {
       <label>
         Engine:
         <select value={engine} onChange={onEngine}>
-          <option>Naive</option>
-          <option>Optimized</option>
+          <option>{EngineVersionE.Naive}</option>
+          <option>{EngineVersionE.Optimized}</option>
         </select>
       </label>
     </div>

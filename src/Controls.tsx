@@ -19,9 +19,10 @@ export default function Controls(props: ControlsPropsI) {
         Size:
         <select value={size} onChange={onSize}>
           <option>50</option>
-          <option>100</option>
+          <option>75</option>
+          {innerWidth <= 642 && innerWidth > 470 && <option>90</option>}
           <option>150</option>
-          {innerWidth > 642 && <option>250</option>}
+          {innerWidth > 800 && <option>250</option>}
         </select>
       </label>
       <label>

@@ -24,7 +24,7 @@ export default function App() {
     const handleResize = () => {
       if (innerWidth > 800) setCanvasSize(750);
       if (innerWidth <= 800) setCanvasSize(600);
-      if (innerWidth <= 620) setCanvasSize(450);
+      if (innerWidth <= 642) setCanvasSize(450);
       if (innerWidth <= 470) setCanvasSize(300);
     };
 

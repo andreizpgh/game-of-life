@@ -16,7 +16,7 @@ export enum EngineVersionE {
 
 export default function App() {
   const [selectedPalette, setPalette] = useState("black");
-  const [selectedSize, setSize] = useState(100);
+  const [selectedSize, setSize] = useState(75);
   const [selectedEngine, setEngine] = useState(EngineVersionE.Naive);
   const [canvasSize, setCanvasSize] = useState(800);
 
